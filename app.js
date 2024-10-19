@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const Listing = require("./models/listing.js");
+const path = require("path");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -17,11 +18,28 @@ async function main() {
     await mongoose.connect(MONGO_URL);
 }
 
+app.set("view engine" , "ejs");
+app.set("views" , path.join(__dirname,"views"));
+
 //creating a basic API
 app.get("/", (req,res) =>{
     res.send("Hi, I am root");
 });
 
+app.get("/listings", async (req, res) => {
+    try {
+        // Fetch all listings from the database
+        const allListings = await Listing.find({});
+
+        // Render the listings in the EJS view
+        res.render("listings/index", { allListings });
+    } catch (err) {
+        console.error("Error fetching listings:", err);
+        res.status(500).send("Error fetching listings");
+    }
+});
+
+/*
 app.get("/testListing", async (req, res) => {
     try {
         let sampleListing = new Listing({
@@ -43,7 +61,7 @@ app.get("/testListing", async (req, res) => {
         res.status(500).send("Error saving the listing");
     }
 });
-
+*/
 app.listen(8080, ()=>{
     console.log("server is listening to port 8080");
 });
