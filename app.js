@@ -20,12 +20,14 @@ async function main() {
 
 app.set("view engine" , "ejs");
 app.set("views" , path.join(__dirname,"views"));
+app.use(express.urlencoded({extended : true}));
 
 //creating a basic API
 app.get("/", (req,res) =>{
     res.send("Hi, I am root");
 });
 
+//Index Route
 app.get("/listings", async (req, res) => {
     try {
         // Fetch all listings from the database
@@ -37,6 +39,13 @@ app.get("/listings", async (req, res) => {
         console.error("Error fetching listings:", err);
         res.status(500).send("Error fetching listings");
     }
+});
+
+//Show Route
+app.get("/listings/:id" , async(req,res) =>{
+    let {id} = req.params;
+    const listing = await Listing.findById(id);
+    res.render("listings/show" , { listing });
 });
 
 /*
