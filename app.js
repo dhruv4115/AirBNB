@@ -5,6 +5,7 @@ const Listing = require("./models/listing.js");
 const path = require("path");
 const methodOverride = require("method-override");
 const cors = require('cors');
+const engine = require("ejs-mate");
 
 const MONGO_URL = "mongodb://127.0.0.1:27017/wanderlust";
 
@@ -25,6 +26,8 @@ app.set("views" , path.join(__dirname,"views"));
 app.use(express.urlencoded({extended : true}));
 app.use(methodOverride("_method"));
 app.use(cors());
+app.engine('ejs' , engine);
+app.use(express.static(path.join(__dirname , "/public")));
 
 //creating a basic API
 app.get("/", (req,res) =>{
